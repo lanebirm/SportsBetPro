@@ -1,2 +1,2 @@
 # SportsBetPro
-Gathering, visualising sports betting data 
+Gathering and visualising sports betting data 
