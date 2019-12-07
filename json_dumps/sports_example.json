@@ -1,0 +1,264 @@
+{
+    "success": true,
+    "data": [
+        {
+            "key": "americanfootball_ncaaf",
+            "active": true,
+            "group": "American Football",
+            "details": "US College Football",
+            "title": "NCAAF"
+        },
+        {
+            "key": "americanfootball_nfl",
+            "active": true,
+            "group": "American Football",
+            "details": "US Football",
+            "title": "NFL"
+        },
+        {
+            "key": "aussierules_afl",
+            "active": true,
+            "group": "Aussie Rules",
+            "details": "Aussie Football",
+            "title": "AFL"
+        },
+        {
+            "key": "basketball_euroleague",
+            "active": true,
+            "group": "Basketball",
+            "details": "Basketball Euroleague",
+            "title": "Basketball Euroleague"
+        },
+        {
+            "key": "basketball_nba",
+            "active": true,
+            "group": "Basketball",
+            "details": "US Basketball",
+            "title": "NBA"
+        },
+        {
+            "key": "basketball_ncaab",
+            "active": true,
+            "group": "Basketball",
+            "details": "US College Basketball",
+            "title": "NCAAB"
+        },
+        {
+            "key": "cricket_test_match",
+            "active": true,
+            "details": "International Test Matches",
+            "group": "Cricket",
+            "title": "Test Matches"
+        },
+        {
+            "key": "icehockey_nhl",
+            "active": true,
+            "group": "Ice Hockey",
+            "details": "US Ice Hockey",
+            "title": "NHL"
+        },
+        {
+            "key": "mma_mixed_martial_arts",
+            "active": true,
+            "group": "Mixed Martial Arts",
+            "details": "Mixed Martial Arts",
+            "title": "MMA"
+        },
+        {
+            "key": "rugbyleague_nrl",
+            "active": true,
+            "group": "Rugby League",
+            "details": "Aussie Rugby League",
+            "title": "NRL"
+        },
+        {
+            "key": "soccer_argentina_primera_division",
+            "active": true,
+            "details": "Superliga Argentina \ud83c\udde6\ud83c\uddf7",
+            "group": "Soccer - Other",
+            "title": "Primera Divisi\u00f3n - Argentina"
+        },
+        {
+            "key": "soccer_australia_aleague",
+            "active": true,
+            "group": "Soccer - Other",
+            "details": "Aussie Soccer \ud83c\udde6\ud83c\uddfa",
+            "title": "A-League"
+        },
+        {
+            "key": "soccer_belgium_first_div",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Belgium Soccer \ud83c\udde7\ud83c\uddea",
+            "title": "Belgium First Div"
+        },
+        {
+            "key": "soccer_brazil_campeonato",
+            "active": true,
+            "group": "Soccer - Other",
+            "details": "Campeonato Brasileiro \ud83c\udde7\ud83c\uddf7",
+            "title": "Brazil S\u00e9rie A"
+        },
+        {
+            "key": "soccer_denmark_superliga",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Danish Soccer \ud83c\udde9\ud83c\uddf0",
+            "title": "Denmark Superliga"
+        },
+        {
+            "key": "soccer_efl_champ",
+            "active": true,
+            "group": "Soccer - UK",
+            "details": "EFL Championship \ud83c\uddec\ud83c\udde7",
+            "title": "Championship"
+        },
+        {
+            "key": "soccer_england_league1",
+            "active": true,
+            "group": "Soccer - UK",
+            "details": "EFL League 1 \ud83c\uddec\ud83c\udde7",
+            "title": "League 1"
+        },
+        {
+            "key": "soccer_england_league2",
+            "active": true,
+            "group": "Soccer - UK",
+            "details": "EFL League 2  \ud83c\uddec\ud83c\udde7",
+            "title": "League 2"
+        },
+        {
+            "key": "soccer_epl",
+            "active": true,
+            "group": "Soccer - UK",
+            "details": "English Premier League \ud83c\uddec\ud83c\udde7",
+            "title": "EPL"
+        },
+        {
+            "key": "soccer_fa_cup",
+            "active": true,
+            "details": "English FA Cup \ud83c\uddec\ud83c\udde7",
+            "group": "Soccer - UK",
+            "title": "FA Cup"
+        },
+        {
+            "key": "soccer_france_ligue_one",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "French Soccer \ud83c\uddeb\ud83c\uddf7",
+            "title": "Ligue 1 - France"
+        },
+        {
+            "key": "soccer_germany_bundesliga",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "German Soccer \ud83c\udde9\ud83c\uddea",
+            "title": "Bundesliga - Germany"
+        },
+        {
+            "key": "soccer_germany_bundesliga2",
+            "active": true,
+            "details": "German Soccer \ud83c\udde9\ud83c\uddea",
+            "group": "Soccer - Europe",
+            "title": "Bundesliga 2 - Germany"
+        },
+        {
+            "key": "soccer_italy_serie_a",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Italian Soccer \ud83c\uddee\ud83c\uddf9",
+            "title": "Serie A - Italy"
+        },
+        {
+            "key": "soccer_italy_serie_b",
+            "active": true,
+            "details": "Italian Soccer \ud83c\uddee\ud83c\uddf9",
+            "group": "Soccer - Europe",
+            "title": "Serie B - Italy"
+        },
+        {
+            "key": "soccer_japan_j_league",
+            "active": true,
+            "group": "Soccer - Other",
+            "details": "Japan Soccer League \ud83c\uddef\ud83c\uddf5",
+            "title": "J League"
+        },
+        {
+            "key": "soccer_mexico_ligamx",
+            "active": true,
+            "details": "Mexican Soccer \ud83c\uddf2\ud83c\uddfd",
+            "group": "Soccer - Other",
+            "title": "Liga MX"
+        },
+        {
+            "key": "soccer_netherlands_eredivisie",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Dutch Soccer \ud83c\uddf3\ud83c\uddf1",
+            "title": "Dutch Eredivisie"
+        },
+        {
+            "key": "soccer_portugal_primeira_liga",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Portugese Soccer \ud83c\uddf5\ud83c\uddf9",
+            "title": "Primeira Liga - Portugal"
+        },
+        {
+            "key": "soccer_russia_premier_league",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Russian Soccer \ud83c\uddf7\ud83c\uddfa",
+            "title": "Premier League - Russia"
+        },
+        {
+            "key": "soccer_spain_la_liga",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Spanish Soccer \ud83c\uddea\ud83c\uddf8",
+            "title": "La Liga - Spain"
+        },
+        {
+            "key": "soccer_spain_segunda_division",
+            "active": true,
+            "details": "Spanish Soccer \ud83c\uddea\ud83c\uddf8",
+            "group": "Soccer - Europe",
+            "title": "La Liga 2 - Spain"
+        },
+        {
+            "key": "soccer_spl",
+            "active": true,
+            "group": "Soccer - UK",
+            "details": "Scottish Premier League \ud83c\uddec\ud83c\udde7",
+            "title": "SPL"
+        },
+        {
+            "key": "soccer_switzerland_superleague",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Swiss Soccer \ud83c\udde8\ud83c\udded",
+            "title": "Swiss Superleague"
+        },
+        {
+            "key": "soccer_turkey_super_league",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "Turkish Soccer \ud83c\uddf9\ud83c\uddf7",
+            "title": "Turkey Super League"
+        },
+        {
+            "key": "soccer_uefa_champs_league",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "European Champions League \ud83c\uddea\ud83c\uddfa",
+            "title": "UEFA Champions"
+        },
+        {
+            "key": "soccer_uefa_europa_league",
+            "active": true,
+            "group": "Soccer - Europe",
+            "details": "European Europa League \ud83c\uddea\ud83c\uddfa",
+            "title": "UEFA Europa"
+        }
+    ]
+}
