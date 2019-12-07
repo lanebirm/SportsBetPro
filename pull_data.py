@@ -1,6 +1,11 @@
+# python version 3.8.0
+
 # Import required packages
 import requests
 import json
+
+def main():
+	getData.activeSports()
 
 
 class getData(object):
@@ -19,4 +24,5 @@ class getData(object):
 		print('Finish')
 
 
-getData.activeSports()
+if__name__== "__main__":
+	main()
