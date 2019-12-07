@@ -5,16 +5,17 @@ import requests
 import json
 
 def main():
-	getData.activeSports()
+	APIGrabber = getData(False)
+	APIGrabber.activeSports()
 
-
-class getData(object):
+class getData():
 	"""docstring for getData"""
 	def __init__(self, arg):
 		super(getData, self).__init__()
+		# dummy arg for now
 		self.arg = arg
 		
-	def activeSports():
+	def activeSports(self):
 		print('Starting Request')
 		# https://api.the-odds-api.com/v3/sports/?apiKey=4e28f0f30c120627544a89a7a51977a5
 		resp = requests.get('https://api.the-odds-api.com/v3/sports',
@@ -22,7 +23,8 @@ class getData(object):
 			params={'api_key': '4e28f0f30c120627544a89a7a51977a5' } )
 		print(resp.json())
 		print('Finish')
+		input('press enter to exit')
 
 
-if__name__== "__main__":
+if __name__== '__main__':
 	main()
