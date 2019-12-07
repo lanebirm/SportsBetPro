@@ -5,14 +5,8 @@ import requests
 import json
 
 def main():
-	# should actually be run from here. import to different script
-	APIDataGrabber = GetData(False)
-	#APIDataGrabber.activeSports()
-
-	#test for mma
-	mma_params = SportOddsRequestParams('mma_mixed_martial_arts')
-	APIDataGrabber.getSportOdds(mma_params)
-
+	# should not actually be run from here. import to different script
+	print('loaded pull_data')
 
 class GetData():
 	"""docstring for getData"""
@@ -73,4 +67,4 @@ class SportOddsRequestParams():
 
 
 if __name__== '__main__':
-	#main()
+	main()
