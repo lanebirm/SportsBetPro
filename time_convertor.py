@@ -14,6 +14,7 @@ class TimeConvertor():
 		self.tz = pytz.timezone('Australia/Brisbane')
 		self.local_time = ""
 		self.local_time_string = ""
+		self.time_until = ""
 		#print('Timezone init to ', self.tz)
 		
 
@@ -28,6 +29,9 @@ class TimeConvertor():
 
 		self.local_time = self.tz.normalize(as_timezone)
 		self.local_time_string = self.local_time.strftime(self.fmt)
+		time_now = datetime.now(self.tz)
+		self.time_until = self.local_time - time_now
+		#print('test')
 
 
 if __name__== '__main__':

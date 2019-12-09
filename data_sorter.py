@@ -2,6 +2,7 @@
 
 # Import required packages
 import time_convertor
+from datetime import datetime
 
 def main():
 	# shouldnt run this
@@ -14,8 +15,9 @@ class DataProcessor():
 		self.h2h_odds = []
 		self.betting_sites = []
 		self.max_h2h_odds = []
-		self.start_time = {'datetime format':[] , 'string format':[]}
-		self.arbitrage_bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[]}
+		self.sports_name = ''
+		self.start_time = {'datetime format':[] , 'string format':[], 'time till start':[]}
+		self.arbitrage_bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[], 'time till start':[]}
 
 	def filter_data(self, json_data):
 		""" process data to pull out just teams, sites and h2h odds of all events  """
@@ -46,6 +48,9 @@ class DataProcessor():
 			local_time_convertor.convert_to_AEST(event_data['commence_time'])
 			self.start_time['string format'].append(local_time_convertor.local_time_string)
 			self.start_time['datetime format'].append(local_time_convertor.local_time)
+			self.start_time['time till start'].append(local_time_convertor.time_until)
+		
+		self.sports_name = (data[0]['sport_nice'])
 
 		# debug helper code
 		# print(self.teams)
@@ -92,6 +97,8 @@ class DataProcessor():
 				self.arbitrage_bet_opportunities['odds data'].append(self.max_h2h_odds[i])
 				self.arbitrage_bet_opportunities['match index'].append(i)
 				self.arbitrage_bet_opportunities['start time'].append(self.start_time['string format'][i])
+				self.arbitrage_bet_opportunities['time till start'].append(self.start_time['time till start'][i])
+
 
 
 if __name__== '__main__':

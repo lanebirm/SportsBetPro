@@ -13,6 +13,7 @@ class GetData():
 	def __init__(self):
 		# nothing to init
 		print('GetData class init')
+		self.api_key = '4e28f0f30c120627544a89a7a51977a5'
 		
 	def get_active_sports(self):
 		print('Starting Sports Request')
@@ -20,7 +21,7 @@ class GetData():
 		# https://api.the-odds-api.com/v3/sports/?apiKey=4e28f0f30c120627544a89a7a51977a5
 		resp = requests.get('https://api.the-odds-api.com/v3/sports',
 			headers={'Content-Type':'application/json'},
-			params={'api_key': '4e28f0f30c120627544a89a7a51977a5'} )
+			params={'api_key': self.api_key } )
 		#print(resp.json())
 
 		#dump response json to file
@@ -44,6 +45,10 @@ class GetData():
 
 		print('Finish Odds Request')
 		return resp.json()
+
+	def set_api_key(self, api_key):
+		self.api_key = api_key
+
 
 class SportOddsRequestParams():
 	"""class for data structures for request parameters"""

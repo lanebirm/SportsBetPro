@@ -7,16 +7,17 @@ import pull_data as api_puller
 import data_sorter 
 import csv
 import time_convertor
+import pickle 
 
 # global constants
 PULL_API_DATA = False  # pull data. if False reload data of last pull
-H2H_ODDS_THRESHOLD = 1.8 # if both teams have avalible odds above this threshold will be counted as arbitrage bet opportunity
+H2H_ODDS_THRESHOLD = 1.9 # if both teams have avalible odds above this threshold will be counted as arbitrage bet opportunity
 
 def main():
 
+	response_data = {'sports':[] , 'odds_data':[]}
 	odds_jsons = []
 	data_processor = []
-	active_sports = ['**loaded_from_file**']
 
 	if PULL_API_DATA:
 		# send api request for data for each sport
@@ -25,31 +26,38 @@ def main():
 		#active_sports = ['rugbyleague_nrl']
 		
 		for sport in active_sports:
-			request_params = api_puller.SportOddsRequestParams(sport)
-			odds_jsons.append(api_grabber.get_sport_odds(request_params))
+			request_params = api_puller.SportOddsRequestParams(sport=sport, region='au', market='h2h')
+			response_data['odds_data'].append(api_grabber.get_sport_odds(request_params))
+			
+		# save as .pickle so can be reloaded for testing. Saves api calls
+		response_data['sports'] = active_sports
+		pickle.dump(response_data, open( "save.pickle", "wb" ))
 	else:
 		# reload last pull data
 
 		#read response json from file
-		with open('json_dumps\odds.json', 'r') as odds_file:
-			odds_jsons.append(json.load(odds_file))
+		# with open('json_dumps\odds.json', 'r') as odds_file:
+		# 	response_data['odds_data'].append(json.load(odds_file))
+
+		# read from pickle file
+		response_data = pickle.load( open( "save.pickle", "rb" ) )
 
 
-	for i,odds in enumerate(odds_jsons):
+	for i,odds in enumerate(response_data['odds_data']):
 		# for each sport process response
 		data_processor.append(data_sorter.DataProcessor())
 		data_processor[i].filter_data(odds)
 		data_processor[i].sort_max_h2h_odds()
 		data_processor[i].check_for_h2h_odds_at_threshold(H2H_ODDS_THRESHOLD)
 
-	for i in range(len(active_sports)):
+	for i in range(len(data_processor)):
 		if len(data_processor[i].arbitrage_bet_opportunities['odds data']) > 0:
-			print('Arbitrage opportunity for', active_sports[i], ' for the following: \n ')
+			print('Arbitrage opportunity for', data_processor[i].sports_name, ' for the following: \n ')
 			for j,event in enumerate(data_processor[i].arbitrage_bet_opportunities['odds data']):
-				print("Match Details: ", event, '  ||  Event Time: ', data_processor[i].arbitrage_bet_opportunities['start time'][j], " ")
+				print("Match Details: ", event, '  ||  Event Time: ', data_processor[i].arbitrage_bet_opportunities['start time'][j], "  ||  Time until: ", data_processor[i].start_time['time till start'][j])
 		else:
-			print('No Arbitrage opportunities')
-	print('\n \n ')
+			print('No Arbitrage opportunities for ', data_processor[i].sports_name)
+		print('\n \n ')
 
 	
 	# test code for creating csv
@@ -64,7 +72,14 @@ def main():
 	print("main end")
 
 
+def get_sports():
+	""" get sports call """
+
+	api_grabber = api_puller.GetData()
+	api_grabber.get_active_sports()
+	print('sports.json updated')
 
 
 if __name__== '__main__':
 	main()
+	#get_sports()
