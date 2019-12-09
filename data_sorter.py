@@ -1,47 +1,11 @@
 # python version 3.8.0
 
 # Import required packages
-import requests
-import json
-import pull_data as api_puller
-import csv
 import time_convertor
 
 def main():
-	api_grabber = api_puller.GetData()
-	#APIDataGrabber.activeSports()
-
-	#test 
-	request_params = api_puller.SportOddsRequestParams('icehockey_nhl')
-	odds_json = api_grabber.get_sport_odds(request_params)
-
-	data_processor = DataProcessor()
-	data_processor.filter_data(odds_json)
-	data_processor.sort_max_h2h_odds()
-	data_processor.check_for_h2h_odds_at_threshold(2.05)
-	
-	print("main end")
-
-
-def main_dummy():
-	"""  dummy main for testing based on presaved API response. """
-	#read response json from file
-	with open('json_dumps\odds.json', 'r') as odds_file:
-		odds_json = json.load(odds_file)
-	#print(odds_json)
-
-	data_processor = DataProcessor()
-	data_processor.filter_data(odds_json)
-	data_processor.sort_max_h2h_odds()
-	data_processor.check_for_h2h_odds_at_threshold(2.05)
-	
-	print("dummy end")
-
-	# with open('data_test.csv', mode='w') as employee_file:
-	# 	employee_writer = csv.writer(employee_file, dialect='excel')
-	# 	employee_writer.writerow(data_processor.teams)
-	# 	employee_writer.writerow(data_processor.h2h_odds)
-	# 	employee_writer.writerow(data_processor.betting_sites)
+	# shouldnt run this
+	print("Main. Should be running this file directly")
 
 class DataProcessor():
 	def __init__(self):
@@ -104,9 +68,9 @@ class DataProcessor():
 					if site_odds[j] > self.max_h2h_odds[i][team][0]:
 						self.max_h2h_odds[i][team] = [site_odds[j] , self.betting_sites[i][k]]
 		
-		print('Finished finding max odds')
+		#print('Finished finding max odds')
 
-	def check_for_h2h_odds_at_threshold(self, min_h2h_alert_threshold = 2.1):
+	def check_for_h2h_odds_at_threshold(self, min_h2h_alert_threshold = 2.0):
 		"""  Alert if there is an event where odds are found for both teams of an event above the threshold """
 
 		if len(self.max_h2h_odds) < 0:
@@ -124,24 +88,11 @@ class DataProcessor():
 				team_two_above = True
 
 			if team_one_above and team_two_above:
-				print('Found Arbitrage opportunity for event ', i)
+				#print('Found Arbitrage opportunity for event ', i)
 				self.arbitrage_bet_opportunities['odds data'].append(self.max_h2h_odds[i])
 				self.arbitrage_bet_opportunities['match index'].append(i)
 				self.arbitrage_bet_opportunities['start time'].append(self.start_time['string format'][i])
 
 
-		if len(self.arbitrage_bet_opportunities['odds data']) > 0:
-			print('Arbitrage opportunity for the following: \n \n ')
-			for i,event in enumerate(self.arbitrage_bet_opportunities['odds data']):
-				print("Match Details: ", event, '    Event Time:  ', self.arbitrage_bet_opportunities['start time'][i], "\n")
-		else:
-			print('No Arbitrage opportunities')
-
-
-
-
-
-
 if __name__== '__main__':
-	#main()
-	main_dummy()
+	main()
