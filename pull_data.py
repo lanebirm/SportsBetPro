@@ -10,19 +10,18 @@ def main():
 
 class GetData():
 	"""docstring for getData"""
-	def __init__(self, arg):
-		super(GetData, self).__init__()
-		# dummy arg for now
-		self.arg = arg
+	def __init__(self):
+		# nothing to init
+		print('GetData class init')
 		
-	def activeSports(self):
+	def get_active_sports(self):
 		print('Starting Sports Request')
 
 		# https://api.the-odds-api.com/v3/sports/?apiKey=4e28f0f30c120627544a89a7a51977a5
 		resp = requests.get('https://api.the-odds-api.com/v3/sports',
 			headers={'Content-Type':'application/json'},
 			params={'api_key': '4e28f0f30c120627544a89a7a51977a5'} )
-		print(resp.json())
+		#print(resp.json())
 
 		#dump response json to file
 		with open('json_dumps\sports.json', 'w') as f:
@@ -31,19 +30,20 @@ class GetData():
 		print('Finish Sports Request')
 		
 
-	def getSportOdds(self, request_params):
-		print('Starting Sports Request')
+	def get_sport_odds(self, request_params):
+		print('Starting Odds Request')
 
 		resp = requests.get(request_params.request_url,
 			headers = {'Content-Type':'application/json'},
 			params = request_params.params )
-		print(resp.json())
+		#print(resp.json())
 
 		#dump response json to file
 		with open('json_dumps\odds.json', 'w') as f:
 			json.dump(resp.json(), f)
 
-		print('Finish Sports Request')
+		print('Finish Odds Request')
+		return resp.json()
 
 class SportOddsRequestParams():
 	"""class for data structures for request parameters"""

@@ -81,7 +81,7 @@
                 },
                 {
                     "site_key": "betfair",
-                    "site_nice": "Betfair",
+                    "site_nice": "Betfair_fake",
                     "last_update": 1575692786,
                     "odds": {
                         "h2h": [
@@ -90,7 +90,7 @@
                         ],
                         "h2h_lay": [
                             2.26,
-                            1.98
+                            2.2
                         ]
                     }
                 },
@@ -153,12 +153,12 @@
                 },
                 {
                     "site_key": "neds",
-                    "site_nice": "Neds",
+                    "site_nice": "Neds_fake",
                     "last_update": 1575692827,
                     "odds": {
                         "h2h": [
                             3.1,
-                            1.38
+                            2.2
                         ]
                     }
                 },
