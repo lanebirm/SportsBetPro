@@ -16,9 +16,10 @@ class DataProcessor():
 		self.betting_sites = []
 		self.max_h2h_odds = []
 		self.max_safety_odds = []
+		self.odds_total_value = []
 		self.sports_name = ''
 		self.start_time = {'datetime format':[] , 'string format':[], 'time till start':[]}
-		self.bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[], 'time till start':[]}
+		self.bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[], 'time till start':[], 'odds total value':[]}
 
 	def filter_data(self, json_data):
 		""" process data to pull out just teams, sites and h2h odds of all events  """
@@ -107,6 +108,25 @@ class DataProcessor():
 		
 		#print('Finished finding max odds')
 
+	def generate_odds_total_value(self):
+		# gen odds total "value". Value is a number used for betting on both out comes and getting same return on both. The higher the more to be made
+		# formula is = team2_odds / (team1_odds + team2_odds) * team1_odds
+	
+		if len(self.max_h2h_odds) < 0:
+			print ("Must first sort max h2h odds")
+			return
+		
+		for i,event_odds in enumerate(self.max_h2h_odds):
+
+			if not (event_odds[self.teams[i][1]][0] == 0) and not (event_odds[self.teams[i][0]][0] == 0):
+				value = event_odds[self.teams[i][1]][0] / (event_odds[self.teams[i][0]][0] + event_odds[self.teams[i][1]][0]) * event_odds[self.teams[i][0]][0]
+			else:
+				#avoid division by zero and make value 0
+				value = 0
+
+			self.odds_total_value.append(value)
+		
+
 	def check_for_h2h_odds_win_lose_thresholds(self, win_threshold = 2.0, safety_bet_threshold = 999):
 		"""  Alert if there is an event where odds are found for teams of an event above the thresholds """
 
@@ -160,36 +180,25 @@ class DataProcessor():
 				self.bet_opportunities['match index'].append(i)
 				self.bet_opportunities['start time'].append(self.start_time['string format'][i])
 				self.bet_opportunities['time till start'].append(self.start_time['time till start'][i])
+				self.bet_opportunities['odds total value'].append(self.odds_total_value[i])
 
-	def check_for_certain_sites(self, win_threshold = 2.0, safety_bet_threshold = 999, safety_sites = {}, win_sites = {} ):
-		"""  Alert if there is an event where odds are found for teams of an event above the thresholds """
+	def check_for_h2h_odds_total_value(self, value_threshold = 2.0):
+		"""  Alert if there is an event where odds total value above threshold """
 
 		if len(self.max_h2h_odds) < 0:
 			print('Have not sorted max h2h odds yet')
 			return
 		
-		if safety_bet_threshold == 999:
-			# no value given. use win threshold for both
-			safety_bet_threshold = win_threshold
-
 		for i,event in enumerate(self.teams):
-			# for each event check if max odds for both teams is above the threshold
-			team_one_above = False
-			team_two_above = False
-
-			if (self.max_h2h_odds[i][event[0]][0] > win_threshold) and  (self.max_h2h_odds[i][event[1]][0] > safety_bet_threshold):
-				team_one_above = True
-				team_two_above = True
-			if (self.max_h2h_odds[i][event[1]][0] > win_threshold) and  (self.max_h2h_odds[i][event[0]][0] > safety_bet_threshold):
-				team_one_above = True
-				team_two_above = True
-
-			if team_one_above and team_two_above:
+			# for each event check if total odds value is above the threshold
+			if self.odds_total_value[i] > value_threshold:
 				#print('Found Arbitrage opportunity for event ', i)
 				self.bet_opportunities['odds data'].append(self.max_h2h_odds[i])
 				self.bet_opportunities['match index'].append(i)
 				self.bet_opportunities['start time'].append(self.start_time['string format'][i])
 				self.bet_opportunities['time till start'].append(self.start_time['time till start'][i])
+				self.bet_opportunities['odds total value'].append(self.odds_total_value[i])
+
 
 
 

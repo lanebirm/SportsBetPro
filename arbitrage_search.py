@@ -11,9 +11,10 @@ import pickle
 from datetime import datetime
 
 # global constants
-PULL_API_DATA = False  # pull data. if False reload data of last pull
+PULL_API_DATA = False	 # pull data. if False reload data of last pull
 H2H_WIN_ODDS_THRESHOLD = 2.0 # top odds threshold
-H2H_SAFETY_ODDS_THRESHOLD = 1.75 # safety odds threshold
+H2H_SAFETY_ODDS_THRESHOLD = 1.4 # safety odds threshold
+TOTAL_VALUE_THRESHOLD = 0.985 # Total value threshold
 REGION_CODE = 'au'
 
 def main():
@@ -26,7 +27,7 @@ def main():
 		# send api request for data for each sport
 		api_grabber = api_puller.GetData()
 		# full list excluding soccer = ['americanfootball_nfl', 'aussierules_afl','basketball_euroleague','basketball_nba','cricket_test_match','icehockey_nhl','mma_mixed_martial_arts', 'rugbyleague_nrl']
-		active_sports = ['americanfootball_nfl','basketball_euroleague','basketball_nba','cricket_test_match','icehockey_nhl','mma_mixed_martial_arts']
+		active_sports = ['americanfootball_nfl','basketball_euroleague','basketball_nba','cricket_test_match','icehockey_nhl','mma_mixed_martial_arts', 'cricket_big_bash']
 		#active_sports = ['rugbyleague_nrl']
 		
 		for sport in active_sports:
@@ -36,7 +37,7 @@ def main():
 		# save as .pickle so can be reloaded for testing. Saves api calls
 		response_data['sports'] = active_sports
 		pickle.dump(response_data, open( "save.pickle", "wb" ))
-		pickle.dump(response_data, open( "backup_pickles/save" + str(datetime.now().strftime('_%d_%Y_%m_%H_%M_%S')) + REGION_CODE + ".pickle", "wb" ))   
+		pickle.dump(response_data, open( "backup_pickles/save" + str(datetime.now().strftime('_%d_%Y_%m_%H_%M_%S_')) + REGION_CODE + ".pickle", "wb" ))   
 	else:
 		# reload last pull data
 
@@ -48,9 +49,9 @@ def main():
 		response_data = pickle.load( open( "save.pickle", "rb" ) )
 
 	# sites to use
-	#sites_best = []
+	#sites_best = ['Betfair', 'Unibet', 'Neds', 'Ladbrokes', 'TAB', 'Bet Easy', 'PlayUp']
 	#sites_safety = []
-	sites_best = []
+	sites_best = []#['Neds', 'Ladbrokes']
 	sites_safety = []
 
 	for i,odds in enumerate(response_data['odds_data']):
@@ -58,6 +59,8 @@ def main():
 		data_processor.append(data_sorter.DataProcessor())
 		data_processor[i].filter_data(odds)
 		data_processor[i].sort_max_h2h_odds(sites_best, sites_safety)
+		data_processor[i].generate_odds_total_value()
+		#data_processor[i].check_for_h2h_odds_total_value(TOTAL_VALUE_THRESHOLD)
 		data_processor[i].check_for_h2h_odds_win_lose_thresholds(H2H_WIN_ODDS_THRESHOLD, H2H_SAFETY_ODDS_THRESHOLD)
 
 
@@ -66,7 +69,7 @@ def main():
 		if len(data_processor[i].bet_opportunities['odds data']) > 0:
 			print('Arbitrage opportunity for', data_processor[i].sports_name, ' for the following: \n ')
 			for j,event in enumerate(data_processor[i].bet_opportunities['odds data']):
-				print("Match Details: ", event, '  ||  Event Time: ', data_processor[i].bet_opportunities['start time'][j], "  ||  Time until: ", data_processor[i].bet_opportunities['time till start'][j])
+				print("Match Details: ", event, "  ||  Total odds 'value': ", data_processor[i].bet_opportunities['odds total value'][j], '  ||  Event Time: ', data_processor[i].bet_opportunities['start time'][j], "  ||  Time until: ", data_processor[i].bet_opportunities['time till start'][j])
 		else:
 			print('No Arbitrage opportunities for ', data_processor[i].sports_name)
 		print('\n \n ')
