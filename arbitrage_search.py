@@ -7,6 +7,7 @@ import pull_data as api_puller
 import data_sorter
 import csv
 import time_convertor
+import time
 import pickle
 from datetime import datetime
 import simple_notifications as SimplyNotify
@@ -32,6 +33,8 @@ def main():
     # sites to use. Empty means use all avalible
     sites_best = []
     sites_safety = []
+    # exclusion list for sports that "max value" is used to trigger emails
+    sports_name_exclusion = ['US Ice Hockey', 'Test Matches']
 
     results_print_statement = ""
 
@@ -39,7 +42,7 @@ def main():
         # send api request for data for each sport
         api_grabber = api_puller.GetData()
         active_sports = ['americanfootball_ncaaf', 'americanfootball_nfl', 'basketball_euroleague', 'basketball_nba', 'basketball_ncaab', 'cricket_test_match', 'icehockey_nhl',
-                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyleague_nrl', 'rugbyunion_six_nations', 'rugbyunion_super_rugby', 'tennis_atp_aus_open_singles', 'tennis_wta_aus_open_singles']
+                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyleague_nrl', 'rugbyunion_six_nations', 'rugbyunion_super_rugby', 'tennis_atp_aus_open_singles', 'tennis_wta_aus_open_singles', 'cricket_odi']
 
         for sport in active_sports:
             request_params = api_puller.SportOddsRequestParams(
@@ -91,11 +94,13 @@ def main():
 
     if EMAIL_NOTIFY:
         for i in range(len(data_processor)):
-            if data_processor[i].bet_opportunities['max value'] > EMAIL_NOTIFY_THRESHHOLD:
-                # email notify and break out as emails bet oppurtunities for all sports anyway
-                SimplyNotify.email(
-                    'Free Money to be made', results_print_statement, 'lanebirmbetnotify@gmail.com')
-                break
+            # Check sports value exclusion list if max value is of intrest
+            if not (data_processor[i].sports_name in sports_name_exclusion):
+                if data_processor[i].bet_opportunities['max value'] > EMAIL_NOTIFY_THRESHHOLD:
+                    # email notify and break out as emails bet oppurtunities for all sports anyway
+                    SimplyNotify.email(
+                        'Free Money to be made', results_print_statement, 'lanebirmbetnotify@gmail.com')
+                    break
 
     # test code for creating csv
     # with open('data_test.csv', mode='w') as employee_file:
@@ -115,6 +120,37 @@ def get_sports():
     print('sports.json updated')
 
 
+def query_loop(duration_mins, interval_mins):
+    """ function to call the main function every mins_interval """
+    interval_in_secs = interval_mins*60
+    duration_in_seconds = duration_mins*60
+
+    t = time.time()
+    while True:
+        # call main function
+        time_before_main = time.time()
+        main()
+        print('\n \n')
+
+        time_for_main = time.time() - time_before_main
+
+        interval_in_secs = interval_in_secs - time_for_main
+
+        duration_in_seconds = duration_in_seconds - interval_in_secs - time_for_main
+
+        # if waiting another interval will run till later then given duration finish looping now
+        if duration_in_seconds < 0:
+            break
+
+        # sleep for the interval_in_secs
+        time.sleep(interval_in_secs)
+
+    elapsed = time.time() - t
+    print('Time taken looping ' + str(elapsed))
+    print('End of query loop')
+
+
 if __name__ == '__main__':
     main()
+    # query_loop(0.6, 0.2)
     # get_sports()

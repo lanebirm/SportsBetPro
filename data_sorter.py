@@ -93,6 +93,9 @@ class DataProcessor():
             for j, team in enumerate(self.teams[i]):
                 # for each team
                 for k, site_odds in enumerate(self.h2h_odds[i]):
+                    # manual check to ignore Unibet odds for NHL
+                    if (self.sports_name == 'NHL') and (self.betting_sites[i][k] == 'Unibet'):
+                        continue
                     # restrict to sites to use. defaults to all
                     if (sites_best_use_all or (self.betting_sites[i][k] in sites_best)) and not (self.betting_sites[i][k] in exclude_sites):
                         # for all odds find largest and save. Also check exclude list
