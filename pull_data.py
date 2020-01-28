@@ -13,7 +13,7 @@ class GetData():
 	def __init__(self):
 		# nothing to init
 		print('GetData class init')
-		self.api_key = '4e28f0f30c120627544a89a7a51977a5'
+		self.api_key = 'cd4c177f453b7be839fcbb198e44df8a'
 		
 	def get_active_sports(self):
 		print('Starting Sports Request')
@@ -55,7 +55,7 @@ class SportOddsRequestParams():
 	def __init__(self, sport='not set', region='au', market='h2h'):
 		#setup structure
 		self.params = {}
-		self.params['api_key'] = '4e28f0f30c120627544a89a7a51977a5'
+		self.params['api_key'] = 'cd4c177f453b7be839fcbb198e44df8a'
 		self.params['region'] = region
 		self.params['sport'] = sport
 		self.params['mkt'] = market #default to h2h

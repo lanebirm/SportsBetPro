@@ -19,7 +19,7 @@ class DataProcessor():
 		self.odds_total_value = []
 		self.sports_name = ''
 		self.start_time = {'datetime format':[] , 'string format':[], 'time till start':[]}
-		self.bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[], 'time till start':[], 'odds total value':[]}
+		self.bet_opportunities = {'odds data':[] , 'match index':[], 'start time':[], 'time till start':[], 'odds total value':[], 'max value':0}
 
 	def filter_data(self, json_data):
 		""" process data to pull out just teams, sites and h2h odds of all events  """
@@ -35,11 +35,15 @@ class DataProcessor():
 			event_h2h_odds = []
 			event_site_names = []
 			for i, sites_data in enumerate(event_data['sites']):
-				if len(sites_data['odds']['h2h']) > 2:
-					# if more the 3 odds values (draw odds given) only take win loss odds
-					event_h2h_odds.append([sites_data['odds']['h2h'][0], sites_data['odds']['h2h'][1]])
-				else:
-					event_h2h_odds.append(sites_data['odds']['h2h'])
+				# if more the 3 odds values (draw odds given) only take win loss odds
+				odds_one = sites_data['odds']['h2h'][0]
+				odds_two = sites_data['odds']['h2h'][1]
+				if sites_data['site_nice'] == 'Betfair':
+					# Bet exchange site. Need to adjust odds assuming 5% of profit is taken
+					odds_one = odds_one - ((odds_one - 1)*0.05)
+					odds_two = odds_two - ((odds_two - 1)*0.05)
+
+				event_h2h_odds.append([odds_one, odds_two])
 				event_site_names.append(sites_data['site_nice'])
 			
 			# append event data
@@ -59,7 +63,7 @@ class DataProcessor():
 		# print(self.betting_sites)
 		# print(self.h2h_odds)
 
-	def sort_max_h2h_odds(self, sites_best = [], sites_safety = []):
+	def sort_max_h2h_odds(self, sites_best = [], sites_safety = [], exclude_sites = []):
 		"""  sort to get max odds offered for each team for all events. """
 
 		sites_best_use_all = False
@@ -83,8 +87,8 @@ class DataProcessor():
 				# for each team
 				for k,site_odds in enumerate(self.h2h_odds[i]):
 					# restrict to sites to use. defaults to all
-					if sites_best_use_all or (self.betting_sites[i][k] in sites_best):
-					# for all odds find largest and save
+					if (sites_best_use_all or (self.betting_sites[i][k] in sites_best)) and not (self.betting_sites[i][k] in exclude_sites):
+					# for all odds find largest and save. Also check exclude list
 						if site_odds[j] > self.max_h2h_odds[i][team][0]:
 							self.max_h2h_odds[i][team] = [site_odds[j] , self.betting_sites[i][k]]
 
@@ -100,7 +104,7 @@ class DataProcessor():
 				# for each team
 				for k,site_odds in enumerate(self.h2h_odds[i]):
 					# restrict to sites to use. defaults to all
-					if sites_safety_use_all or (self.betting_sites[i][k] in sites_safety):
+					if sites_safety_use_all or (self.betting_sites[i][k] in sites_safety) and not (self.betting_sites[i][k] in exclude_sites):
 					# for all odds find largest and save
 						if site_odds[j] > self.max_safety_odds[i][team][0]:
 							self.max_safety_odds[i][team] = [site_odds[j] , self.betting_sites[i][k]]
@@ -198,6 +202,9 @@ class DataProcessor():
 				self.bet_opportunities['start time'].append(self.start_time['string format'][i])
 				self.bet_opportunities['time till start'].append(self.start_time['time till start'][i])
 				self.bet_opportunities['odds total value'].append(self.odds_total_value[i])
+
+				if self.odds_total_value[i] > self.bet_opportunities['max value']:
+					self.bet_opportunities['max value'] = self.odds_total_value[i]
 
 
 
