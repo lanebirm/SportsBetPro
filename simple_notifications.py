@@ -4,7 +4,7 @@ try:
     # Python 2 import
     import simple_notifications_config
 except:
-    # Python 3 import    
+    # Python 3 import
     from . import simple_notifications_config
 # Import requests library, used for Pushbullet and Pushover notifications
 import requests
@@ -35,7 +35,7 @@ from email.mime.text import MIMEText
 # @click.option('--body', help='Pushover notification body', required=True)
 # @click.option('--image', help='Pushover notification image', default="no")
 
-def pushover(subject, body, image = "no"):
+def pushover(subject, body, image="no"):
     '''
     This functions sends a notification using Pushover
         Args:
@@ -48,18 +48,20 @@ def pushover(subject, body, image = "no"):
         'user': simple_notifications_config.USER_KEY,
         'title': subject,
         'message': body
-        }
+    }
     if image != "no":
         image = {"attachment": ("image.jpg", open(image, "rb"), "image/jpeg")}
-        response = requests.post('https://api.pushover.net/1/messages.json', data=params, files=image)
+        response = requests.post(
+            'https://api.pushover.net/1/messages.json', data=params, files=image)
     else:
-        response = requests.post('https://api.pushover.net/1/messages.json', data=params)
+        response = requests.post(
+            'https://api.pushover.net/1/messages.json', data=params)
     #print (json.dumps(params))
     if response.status_code != 200:
-        print ('Something went wrong...')
-        print (response.content)
+        print('Something went wrong...')
+        print(response.content)
     else:
-        print ('Sending complete')
+        print('Sending complete')
 
 # @notification.command(help='Send a notification using Pushbullet')
 # @click.option('--subject', help='Pushbullet notification subject', required=True)
@@ -87,7 +89,9 @@ def pushover(subject, body, image = "no"):
 # @click.option('--body', help='Email Body', required=True)
 # @click.option('--recipients', help='Separate multiple recipients using comma', required=True)
 # @click.option('--attachments', help='Accepts complete file paths. Separate multiple attachments using comma')
-def email(subject, body, recipients, attachments = None):
+
+
+def email(subject, body, recipients, attachments=None):
     '''
     This functions sends a notification using Email
             Args:
@@ -96,7 +100,7 @@ def email(subject, body, recipients, attachments = None):
             recipients  (str) : Email recipients.
             attachments (str) : Email attachments.
     '''
-    
+
     print("Sending email to ", recipients)
     msg = MIMEMultipart()
     msg['From'] = simple_notifications_config.EMAIL_SENDER
@@ -140,12 +144,14 @@ def email(subject, body, recipients, attachments = None):
     if simple_notifications_config.EMAIL_DEBUG_LEVEL == '1':
         server.set_debuglevel(1)
     server.starttls()
-    server.login(simple_notifications_config.EMAIL_SENDER,simple_notifications_config.EMAIL_PASSWORD)
-    server.sendmail(simple_notifications_config.EMAIL_SENDER, email_recipients, msg.as_string())
+    server.login(simple_notifications_config.EMAIL_SENDER,
+                 simple_notifications_config.EMAIL_PASSWORD)
+    server.sendmail(simple_notifications_config.EMAIL_SENDER,
+                    email_recipients, msg.as_string())
     server.quit()
     print("email sent")
 
 
 # Uncomment these rows for manual testing
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    notification()
