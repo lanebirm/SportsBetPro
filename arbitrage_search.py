@@ -11,42 +11,36 @@ import time
 import pickle
 from datetime import datetime
 import simple_notifications as SimplyNotify
-
-# global constants
-PULL_API_DATA = False	 # pull data. if False reload data of last pull
-EMAIL_NOTIFY = False       # flag to push notify to phone
-# min value of the bet oppertunities max_value to prompt emailing notification
-EMAIL_NOTIFY_THRESHHOLD = 1
-H2H_WIN_ODDS_THRESHOLD = 2.0  # top odds threshold
-H2H_SAFETY_ODDS_THRESHOLD = 1.4  # safety odds threshold
-TOTAL_VALUE_THRESHOLD = 0.985  # Total value threshold
-REGION_CODE = 'au'
-
+import main_variables
 
 def main():
+    variables = main_variables.MainVariables()
+    query(variables)
+
+def query(variables):
 
     response_data = {'sports': [], 'odds_data': []}
-    odds_jsons = []
-    data_processor = []
+    odds_jsons = variables.odds_jsons
+    data_processor = variables.data_processor
     # sites exclude list
-    exclude_sites = []
+    exclude_sites = variables.exclude_sites
     # sites to use. Empty means use all avalible
-    sites_best = []
-    sites_safety = []
+    sites_best = variables.sites_best
+    sites_safety = variables.sites_safety
     # exclusion list for sports that "max value" is used to trigger emails
-    sports_name_exclusion = ['US Ice Hockey', 'Test Matches']
+    sports_name_exclusion = variables.sports_name_exclusion
 
     results_print_statement = ""
 
-    if PULL_API_DATA:
+    if variables.pull_api_data:
         # send api request for data for each sport
         api_grabber = api_puller.GetData()
         active_sports = ['americanfootball_ncaaf', 'americanfootball_nfl', 'basketball_euroleague', 'basketball_nba', 'basketball_ncaab', 'cricket_test_match', 'icehockey_nhl',
-                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyleague_nrl', 'rugbyunion_six_nations', 'rugbyunion_super_rugby', 'tennis_atp_aus_open_singles', 'tennis_wta_aus_open_singles', 'cricket_odi']
+                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyunion_six_nations', 'rugbyunion_super_rugby', 'tennis_atp_aus_open_singles', 'tennis_wta_aus_open_singles', 'cricket_odi']
 
         for sport in active_sports:
             request_params = api_puller.SportOddsRequestParams(
-                sport=sport, region=REGION_CODE, market='h2h')
+                sport=sport, region=variables.region_code, market='h2h')
             response_data['odds_data'].append(
                 api_grabber.get_sport_odds(request_params))
 
@@ -54,7 +48,7 @@ def main():
         response_data['sports'] = active_sports
         pickle.dump(response_data, open("save.pickle", "wb"))
         pickle.dump(response_data, open("backup_pickles/save" + str(
-            datetime.now().strftime('_%d_%Y_%m_%H_%M_%S_')) + REGION_CODE + ".pickle", "wb"))
+            datetime.now().strftime('_%d_%Y_%m_%H_%M_%S_')) + variables.region_code + ".pickle", "wb"))
     else:
         # reload last pull data
         # read from pickle file
@@ -72,8 +66,8 @@ def main():
             sites_best, sites_safety, exclude_sites)
         data_processor[count].generate_odds_total_value()
         data_processor[count].check_for_h2h_odds_total_value(
-            TOTAL_VALUE_THRESHOLD)
-        #data_processor[i].check_for_h2h_odds_win_lose_thresholds(H2H_WIN_ODDS_THRESHOLD, H2H_SAFETY_ODDS_THRESHOLD)
+            variables.total_value_threshold)
+        #data_processor[count].check_for_h2h_odds_win_lose_thresholds(variables.h2h_win_odds_threshold, variables.h2h_win_odds_threshold)
         count = count + 1
 
     # print results
@@ -92,11 +86,11 @@ def main():
 
     print(results_print_statement)
 
-    if EMAIL_NOTIFY:
+    if variables.email_notify:
         for i in range(len(data_processor)):
             # Check sports value exclusion list if max value is of intrest
             if not (data_processor[i].sports_name in sports_name_exclusion):
-                if data_processor[i].bet_opportunities['max value'] > EMAIL_NOTIFY_THRESHHOLD:
+                if data_processor[i].bet_opportunities['max value'] > variables.email_notify_threshold:
                     # email notify and break out as emails bet oppurtunities for all sports anyway
                     SimplyNotify.email(
                         'Free Money to be made', results_print_statement, 'lanebirmbetnotify@gmail.com')
@@ -134,21 +128,22 @@ def query_loop(duration_mins, interval_mins):
 
         time_for_main = time.time() - time_before_main
 
-        interval_in_secs = interval_in_secs - time_for_main
+        current_interval_sub_main = interval_in_secs - time_for_main
 
-        duration_in_seconds = duration_in_seconds - interval_in_secs - time_for_main
+        duration_in_seconds = duration_in_seconds - current_interval_sub_main - time_for_main
 
         # if waiting another interval will run till later then given duration finish looping now
         if duration_in_seconds < 0:
             break
 
         # sleep for the interval_in_secs
-        time.sleep(interval_in_secs)
+        if current_interval_sub_main <= 0:
+            current_interval_sub_main = 0.01
+        time.sleep(current_interval_sub_main)
 
     elapsed = time.time() - t
     print('Time taken looping ' + str(elapsed))
     print('End of query loop')
-
 
 if __name__ == '__main__':
     main()
