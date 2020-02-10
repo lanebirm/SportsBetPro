@@ -75,6 +75,8 @@ def query(variables):
         if len(data_processor[i].bet_opportunities['odds data']) > 0:
             results_print_statement = results_print_statement + 'Arbitrage opportunity for ' + \
                 data_processor[i].sports_name + ' for the following: \n '
+            results_print_statement = results_print_statement + 'Max "value" of: ' + \
+                str(data_processor[i].bet_opportunities['max value']) + '\n'
             for j, event in enumerate(data_processor[i].bet_opportunities['odds data']):
                 results_print_statement = results_print_statement + "Match Details: " + str(event) + "  ||  Total odds 'value': " + str(data_processor[i].bet_opportunities['odds total value'][j]) + '  ||  Event Time: ' + str(
                     data_processor[i].bet_opportunities['start time'][j]) + "  ||  Time until: " + str(data_processor[i].bet_opportunities['time till start'][j]) + "\n"
@@ -94,14 +96,16 @@ def query(variables):
                     # email notify and break out as emails bet oppurtunities for all sports anyway
                     SimplyNotify.email(
                         'Free Money to be made', results_print_statement, 'lanebirmbetnotify@gmail.com')
+                    SimplyNotify.email(
+                        'Free Money to be made', results_print_statement, 'taber@labrys.io')
                     break
 
     # test code for creating csv
     # with open('data_test.csv', mode='w') as employee_file:
-    # 	employee_writer = csv.writer(employee_file, dialect='excel')
-    # 	employee_writer.writerow(data_processor.teams)
-    # 	employee_writer.writerow(data_processor.h2h_odds)
-    # 	employee_writer.writerow(data_processor.betting_sites)
+    #   employee_writer = csv.writer(employee_file, dialect='excel')
+    #   employee_writer.writerow(data_processor.teams)
+    #   employee_writer.writerow(data_processor.h2h_odds)
+    #   employee_writer.writerow(data_processor.betting_sites)
 
     print("main end")
 
