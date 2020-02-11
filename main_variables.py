@@ -10,9 +10,12 @@ class MainVariables():
         #print('MainVariables init')
         # flags
         self.pull_api_data = True	 # pull data. if False reload data of last pull
-        self.email_notify = False       # flag to push notify to phone
+        self.email_notify = True       # flag to push notify to phone
+        self.print_data_frames = True   # Flag to print data with data frame tables
+        #email notify list
+        self.email_list = ['lanebirmbetnotify@gmail.com', 'taber@labrys.io']
         # min value of the bet oppertunities max_value to prompt emailing notification
-        self.email_notify_threshold = 1
+        self.email_notify_threshold = 1.015
         self.h2h_win_odds_threshold = 2.0  # top odds threshold
         self.h2h_safety_odds_threshold = 1.4  # safety odds threshold
         self.total_value_threshold = 0.985  # Total value threshold

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# python version 3.8.0
+
 # -*- encoding: utf-8 -*-
 try:
     # Python 2 import
@@ -91,23 +93,29 @@ def pushover(subject, body, image="no"):
 # @click.option('--attachments', help='Accepts complete file paths. Separate multiple attachments using comma')
 
 
-def email(subject, body, recipients, attachments=None):
+def email(subject, recipients, body="", attachments=None, input_msg=None):
     '''
     This functions sends a notification using Email
             Args:
             subject     (str) : Email Subject.
-            body        (str) : Email Body.
+            body        (str or MIMEText) : Email Body.
             recipients  (str) : Email recipients.
             attachments (str) : Email attachments.
+            msg         (MIMEMultipart):" message pre created (optional). Ignores body if given
     '''
 
     print("Sending email to ", recipients)
     msg = MIMEMultipart()
+    if input_msg != None:
+        msg=input_msg
+    else:
+        msg.attach(MIMEText(body))
+    
     msg['From'] = simple_notifications_config.EMAIL_SENDER
     email_recipients = [recipients]
     msg['To'] = ', '.join(email_recipients)
     msg['Subject'] = subject
-    msg.attach(MIMEText(body))
+
 
     # if attachments is not None:
     #     attachments = attachments.split(',')

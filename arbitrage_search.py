@@ -1,4 +1,5 @@
 # python version 3.8.0
+# Author: Lane Birmingham
 
 # Import required packages
 import requests
@@ -12,6 +13,7 @@ import pickle
 from datetime import datetime
 import simple_notifications as SimplyNotify
 import main_variables
+import search_helper_functions as functions
 
 def main():
     variables = main_variables.MainVariables()
@@ -36,7 +38,7 @@ def query(variables):
         # send api request for data for each sport
         api_grabber = api_puller.GetData()
         active_sports = ['americanfootball_ncaaf', 'americanfootball_nfl', 'basketball_euroleague', 'basketball_nba', 'basketball_ncaab', 'cricket_test_match', 'icehockey_nhl',
-                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyunion_six_nations', 'rugbyunion_super_rugby', 'tennis_atp_aus_open_singles', 'tennis_wta_aus_open_singles', 'cricket_odi']
+                         'mma_mixed_martial_arts', 'cricket_big_bash', 'rugbyunion_six_nations', 'rugbyunion_super_rugby','rugbyunion_premiership_rugby','cricket_odi']
 
         for sport in active_sports:
             request_params = api_puller.SportOddsRequestParams(
@@ -70,23 +72,47 @@ def query(variables):
         #data_processor[count].check_for_h2h_odds_win_lose_thresholds(variables.h2h_win_odds_threshold, variables.h2h_win_odds_threshold)
         count = count + 1
 
-    # print results
-    for i in range(len(data_processor)):
-        if len(data_processor[i].bet_opportunities['odds data']) > 0:
-            results_print_statement = results_print_statement + 'Arbitrage opportunity for ' + \
-                data_processor[i].sports_name + ' for the following: \n '
-            results_print_statement = results_print_statement + 'Max "value" of: ' + \
-                str(data_processor[i].bet_opportunities['max value']) + '\n'
-            for j, event in enumerate(data_processor[i].bet_opportunities['odds data']):
-                results_print_statement = results_print_statement + "Match Details: " + str(event) + "  ||  Total odds 'value': " + str(data_processor[i].bet_opportunities['odds total value'][j]) + '  ||  Event Time: ' + str(
-                    data_processor[i].bet_opportunities['start time'][j]) + "  ||  Time until: " + str(data_processor[i].bet_opportunities['time till start'][j]) + "\n"
-        else:
-            results_print_statement = results_print_statement + \
-                'No Arbitrage opportunities for ' + \
-                str(data_processor[i].sports_name)
-        results_print_statement = results_print_statement + '\n \n '
+    results_print_statement = functions.create_print_statement(data_processor)
 
-    print(results_print_statement)
+    # Data Frames
+    msg = SimplyNotify.MIMEMultipart()
+    if variables.print_data_frames:
+        # create data frame per table
+        sports_names = []
+        sports_max_values = []
+        has_values_flags =[]
+        sports_dataframes, sports_names, sports_max_values, has_values_flags = functions.create_dfs(data_processor)
+
+        results_dataframe_email_print = ""
+        for i, dataframe in enumerate(sports_dataframes):
+            # setup print for email
+            if has_values_flags[i]:
+                results_dataframe_email_print = results_dataframe_email_print + 'Arbitrage opportunity for ' + \
+                    sports_names[i] + ' for the following: \n '
+                results_dataframe_email_print = results_dataframe_email_print + 'Max "value" of: ' + \
+                    str(sports_max_values[i]) + '\n' + '\n'
+
+                msg.attach(SimplyNotify.MIMEText(results_dataframe_email_print))
+                
+                html = """\
+                    <html>
+                    <head></head>
+                    <body>
+                        {0}
+                    </body>
+                    </html>
+                    """.format(dataframe.to_html())
+                table_as_string = SimplyNotify.MIMEText(html, 'html')
+
+                msg.attach(table_as_string)
+
+            else:
+                results_dataframe_email_print = results_dataframe_email_print + \
+                    'No Arbitrage opportunities for ' + str(sports_names[i])
+                msg.attach(SimplyNotify.MIMEText(results_dataframe_email_print))
+
+            results_dataframe_email_print = ""
+            results_dataframe_email_print = results_dataframe_email_print + '\n \n '
 
     if variables.email_notify:
         for i in range(len(data_processor)):
@@ -94,11 +120,18 @@ def query(variables):
             if not (data_processor[i].sports_name in sports_name_exclusion):
                 if data_processor[i].bet_opportunities['max value'] > variables.email_notify_threshold:
                     # email notify and break out as emails bet oppurtunities for all sports anyway
-                    SimplyNotify.email(
-                        'Free Money to be made', results_print_statement, 'lanebirmbetnotify@gmail.com')
-                    SimplyNotify.email(
-                        'Free Money to be made', results_print_statement, 'taber@labrys.io')
+                    if variables.print_data_frames:
+                        for emails in variables.email_list:
+                            SimplyNotify.email(
+                                'Free Money to be made', emails, input_msg=msg)
+                    else:
+                        for emails in variables.email_list:
+                            SimplyNotify.email(
+                                'Free Money to be made', emails, results_print_statement)
+
                     break
+
+    print("main end")
 
     # test code for creating csv
     # with open('data_test.csv', mode='w') as employee_file:
@@ -106,9 +139,6 @@ def query(variables):
     #   employee_writer.writerow(data_processor.teams)
     #   employee_writer.writerow(data_processor.h2h_odds)
     #   employee_writer.writerow(data_processor.betting_sites)
-
-    print("main end")
-
 
 def get_sports():
     """ get sports call """

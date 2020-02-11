@@ -1,4 +1,5 @@
 # python version 3.8.0
+# Author: Lane Birmingham
 
 # Import required packages
 import requests
