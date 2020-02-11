@@ -91,14 +91,24 @@ def create_dfs(data_processors):
             sites_sets_two.append(events_sites_set_2)
             team_sets_two.append(events_teams_set_2)
         else:
+            sports_names.append(data_processors[i].sports_name)
+            sports_max_values.append(0.0)
             has_values_flags.append(False)
 
+    count = 0
     for i in range(len(sports_names)):
-       array = np.array([odds_total_value_sets[i], team_sets_one[i], sites_sets_one[i], odds_data_sets_one[i], team_sets_two[i], sites_sets_two[i], odds_data_sets_two[i], start_time_sets[i], time_until_sets[i]])
-       df = pd.DataFrame(array, index=titles)
-       df_transposed = df.T 
-       #TODO sort out / df_transposed.sort_values("Total Odds Value", axis='columns', ascending=False, inplace=True, kind='quicksort', na_position='last')
-       sport_dfs.append(df_transposed)
+        if has_values_flags[i]:
+            array = np.array([odds_total_value_sets[count], team_sets_one[count], sites_sets_one[count], odds_data_sets_one[count], team_sets_two[count], sites_sets_two[count], odds_data_sets_two[count], start_time_sets[count], time_until_sets[count]])
+            df = pd.DataFrame(array, index=titles)
+            df_transposed = df.T 
+            #TODO sort out / df_transposed.sort_values("Total Odds Value", axis='columns', ascending=False, inplace=True, kind='quicksort', na_position='last')
+            count = count + 1
+        else:
+            # empty df for the sport
+            array = np.array(["", "", ""])
+            df_transposed = pd.DataFrame(array)
+
+        sport_dfs.append(df_transposed)
        
 
     return sport_dfs, sports_names, sports_max_values, has_values_flags

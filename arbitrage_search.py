@@ -108,7 +108,7 @@ def query(variables):
 
             else:
                 results_dataframe_email_print = results_dataframe_email_print + \
-                    'No Arbitrage opportunities for ' + str(sports_names[i])
+                    'No Arbitrage opportunities for ' + str(sports_names[i]) + '\n'
                 msg.attach(SimplyNotify.MIMEText(results_dataframe_email_print))
 
             results_dataframe_email_print = ""
