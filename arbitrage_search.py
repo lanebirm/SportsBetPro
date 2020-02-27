@@ -67,9 +67,9 @@ def query(variables):
         data_processor[count].sort_max_h2h_odds(
             sites_best, sites_safety, exclude_sites)
         data_processor[count].generate_odds_total_value()
-        data_processor[count].check_for_h2h_odds_total_value(
-            variables.total_value_threshold)
-        #data_processor[count].check_for_h2h_odds_win_lose_thresholds(variables.h2h_win_odds_threshold, variables.h2h_win_odds_threshold)
+        #data_processor[count].check_for_h2h_odds_total_value(
+         #  variables.total_value_threshold)
+        data_processor[count].check_for_h2h_odds_win_lose_thresholds(variables.h2h_win_odds_threshold, variables.h2h_win_odds_threshold)
         count = count + 1
 
     results_print_statement = functions.create_print_statement(data_processor)
@@ -113,6 +113,8 @@ def query(variables):
 
             results_dataframe_email_print = ""
             results_dataframe_email_print = results_dataframe_email_print + '\n \n '
+    else:
+        print(results_print_statement)
 
     if variables.email_notify:
         for i in range(len(data_processor)):

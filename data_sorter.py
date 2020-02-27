@@ -199,8 +199,13 @@ class DataProcessor():
                     self.start_time['string format'][i])
                 self.bet_opportunities['time till start'].append(
                     self.start_time['time till start'][i])
+                # odds total value overriden from max to max odds value generated earlier
+                odds_value = self.calc_odds_value(temp_max_h2h_odds)
                 self.bet_opportunities['odds total value'].append(
-                    self.odds_total_value[i])
+                    odds_value)
+                self.odds_total_value[i] = odds_value
+                if odds_value > self.bet_opportunities['max value']:
+                    self.bet_opportunities['max value'] = odds_value
 
     def check_for_h2h_odds_total_value(self, value_threshold=2.0):
         """  Alert if there is an event where odds total value above threshold """
@@ -225,6 +230,20 @@ class DataProcessor():
 
                 if self.odds_total_value[i] > self.bet_opportunities['max value']:
                     self.bet_opportunities['max value'] = self.odds_total_value[i]
+    
+    def calc_odds_value(self, odds):
+        # calculate odds vale for given 2 odds in dictionary
+        keys = odds.keys()
+        odds_values = list(odds.values())
+        if not (odds_values[0][0] == 0) and not (odds_values[1][0] == 0):
+            value = odds_values[1][0] / (
+                odds_values[0][0] + odds_values[1][0]) * odds_values[0][0]
+        else:
+            # avoid division by zero and make value 0
+            value = 0
+
+        return value
+
 
 
 if __name__ == '__main__':
