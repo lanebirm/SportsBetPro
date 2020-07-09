@@ -94,7 +94,7 @@ class DataProcessor():
             for j, team in enumerate(self.teams[i]):
                 # for each team
                 for k, site_odds in enumerate(self.h2h_odds[i]):
-                    # manual check to ignore Unibet odds for NHL
+                    # TODO. manual check to ignore Unibet odds for NHL 
                     if (self.sports_name == 'NHL') and (self.betting_sites[i][k] == 'Unibet'):
                         continue
                     # restrict to sites to use. defaults to all

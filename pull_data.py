@@ -33,6 +33,7 @@ class GetData():
             json.dump(resp.json(), f)
 
         print('Finish Sports Request')
+        return resp.json()
 
     def get_sport_odds(self, request_params):
         print('Starting Odds Request')
