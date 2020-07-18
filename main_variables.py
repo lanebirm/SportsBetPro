@@ -11,7 +11,7 @@ class MainVariables():
         # print('MainVariables init')
         # flags
         self.pull_api_data = True	 # pull data. if False reload data of last pull
-        self.email_notify = False       # flag to push notify to phone
+        self.email_notify = True       # flag to push notify to phone
         self.print_data_frames = False   # Flag to print data with data frame tables
         # email notify list
         self.email_list = ['lanebirmbetnotify@gmail.com']
@@ -24,7 +24,8 @@ class MainVariables():
         self.sports_names = ['americanfootball_ncaaf', 'americanfootball_nfl',
                              'aussierules_afl', 'esports_lol', 'mma_mixed_martial_arts', 'rugbyleague_nrl']
         self.sports_names_not_to_pull = ['icehockey_nhl', 'soccer_australia_aleague', 'soccer_denmark_superliga', 'soccer_efl_champ', 'soccer_england_league1', 'soccer_epl', 'soccer_fa_cup', 'soccer_finland_veikkausliiga', 'soccer_italy_serie_a', 'soccer_italy_serie_b', 'soccer_japan_j_league', 'soccer_korea_kleague1',
-                                         'soccer_norway_eliteserien', 'soccer_portugal_primeira_liga', 'soccer_russia_premier_league', 'soccer_spain_la_liga', 'soccer_spain_segunda_division', 'soccer_sweden_allsvenskan', 'soccer_sweden_superettan', 'soccer_switzerland_superleague', 'soccer_turkey_super_league', 'soccer_uefa_europa_league', 'soccer_usa_mls']
+                                         'soccer_norway_eliteserien', 'soccer_portugal_primeira_liga', 'soccer_russia_premier_league', 'soccer_spain_la_liga', 'soccer_spain_segunda_division', 'soccer_sweden_allsvenskan', 'soccer_sweden_superettan', 'soccer_switzerland_superleague', 'soccer_turkey_super_league', 'soccer_uefa_europa_league', 'soccer_usa_mls', 'soccer_uefa_champs_league']
+        self.sports_ignoring_keywords = ['soccer']
 
         self.odds_jsons = []
         self.data_processor = []

@@ -46,19 +46,26 @@ def query(variables, check_type):
         api_grabber.get_active_sports()
 
         # get active sports name
-        active_sports = []
+        active_sports_keys = []
         sports_name_data = api_grabber.get_active_sports()
         for sport_name in sports_name_data['data']:
-            active_sports.append(sport_name['key'])
+            active_sports_keys.append(sport_name['key'])
 
         fetched_sports = []
-        for sport in active_sports:
-            if sport not in variables.sports_names_not_to_pull:
-                fetched_sports.append(sport)
-                request_params = api_puller.SportOddsRequestParams(
-                    sport=sport, region=variables.region_code, market='h2h')
-                response_data['odds_data'].append(
-                    api_grabber.get_sport_odds(request_params))
+        for sport in active_sports_keys:
+            if (sport not in variables.sports_names_not_to_pull):
+                add_sport = True
+                # Now check if sport contains any of exclude keyword
+                for keyword in variables.sports_ignoring_keywords:
+                    if keyword in sport:
+                        add_sport = False
+                        break
+                if add_sport:
+                    fetched_sports.append(sport)
+                    request_params = api_puller.SportOddsRequestParams(
+                        sport=sport, region=variables.region_code, market='h2h')
+                    response_data['odds_data'].append(
+                        api_grabber.get_sport_odds(request_params))
 
         # save as .pickle so can be reloaded for testing. Saves api calls
         response_data['sports'] = fetched_sports
