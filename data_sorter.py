@@ -3,6 +3,7 @@
 
 # Import required packages
 import time_convertor
+import pytz
 from datetime import datetime
 
 
@@ -214,7 +215,13 @@ class DataProcessor():
             print('Have not sorted max h2h odds yet')
             return
 
+        time_zone = pytz.timezone('Australia/Brisbane')
+        time_now = datetime.now(time_zone)
+
         for i, event in enumerate(self.teams):
+            # if event is live data is usually not accurate enough to be used. Move on to next event. 
+            if self.start_time['datetime format'][i] < time_now:
+                continue
             # for each event check if total odds value is above the threshold
             if self.odds_total_value[i] > value_threshold:
                 #print('Found Arbitrage opportunity for event ', i)

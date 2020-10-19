@@ -168,14 +168,6 @@ def query(variables, check_type):
 
     return True
 
-    # test code for creating csv
-    # with open('data_test.csv', mode='w') as employee_file:
-    #   employee_writer = csv.writer(employee_file, dialect='excel')
-    #   employee_writer.writerow(data_processor.teams)
-    #   employee_writer.writerow(data_processor.h2h_odds)
-    #   employee_writer.writerow(data_processor.betting_sites)
-
-
 def get_sports():
     """ get sports call """
 
