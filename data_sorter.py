@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # python version 3.8.0
 # Author: Lane Birmingham
 
