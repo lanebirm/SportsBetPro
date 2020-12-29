@@ -1,1 +1,5 @@
 workspace.code-workspace
+
+*.pickle
+
+*.pyc
