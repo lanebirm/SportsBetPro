@@ -102,7 +102,16 @@ def query(variables, check_type):
 
     results_print_statement = functions.create_print_statement(data_processor)
 
-    # Data Frames
+    # Emailing + print with dfs
+    max_value_of_intrest = variables.email_notify_threshold
+    value_threshold_found = False
+    for i in range(len(data_processor)):
+        # Check sports value exclusion list if max value is of intrest
+        if not (data_processor[i].sports_name in sports_name_exclusion):
+            if data_processor[i].bet_opportunities['max value'] > max_value_of_intrest:
+                value_threshold_found = True
+                max_value_of_intrest = data_processor[i].bet_opportunities['max value']
+
     msg = SimplyNotify.MIMEMultipart()
     if variables.print_data_frames:
         # create data frame per table
@@ -112,13 +121,14 @@ def query(variables, check_type):
         sports_dataframes, sports_names, sports_max_values, has_values_flags = functions.create_dfs(
             data_processor)
 
-        results_dataframe_email_print = ""
+        msg.attach(SimplyNotify.MIMEText(
+            "Max value of: " + str(max_value_of_intrest) + "\n"))
+        end_string = ""
         for i, dataframe in enumerate(sports_dataframes):
             # setup print for email
             if has_values_flags[i]:
-                results_dataframe_email_print = results_dataframe_email_print + 'Arbitrage opportunity for ' + \
-                    sports_names[i] + ' for the following: \n '
-                results_dataframe_email_print = results_dataframe_email_print + 'Max "value" of: ' + \
+                results_dataframe_email_print = "\n " + sports_names[i]
+                results_dataframe_email_print = results_dataframe_email_print + ' max "value" of: ' + \
                     str(sports_max_values[i]) + '\n' + '\n'
 
                 msg.attach(SimplyNotify.MIMEText(
@@ -137,34 +147,29 @@ def query(variables, check_type):
                 msg.attach(table_as_string)
 
             else:
-                results_dataframe_email_print = results_dataframe_email_print + \
-                    'No Arbitrage opportunities for ' + \
+                end_string = end_string + \
+                    '\nNo Arbitrage opportunities for ' + \
                     str(sports_names[i]) + '\n'
-                msg.attach(SimplyNotify.MIMEText(
-                    results_dataframe_email_print))
 
             results_dataframe_email_print = ""
-            results_dataframe_email_print = results_dataframe_email_print + '\n \n '
+            results_dataframe_email_print = results_dataframe_email_print + '\n '
+        msg.attach(SimplyNotify.MIMEText(
+                    end_string))
         print(sports_dataframes)
     else:
         print(results_print_statement)
 
     if variables.email_notify:
-        for i in range(len(data_processor)):
-            # Check sports value exclusion list if max value is of intrest
-            if not (data_processor[i].sports_name in sports_name_exclusion):
-                if data_processor[i].bet_opportunities['max value'] > variables.email_notify_threshold:
-                    # email notify and break out as emails bet oppurtunities for all sports anyway
-                    if variables.print_data_frames:
-                        for emails in variables.email_list:
-                            SimplyNotify.email(
-                                'Free Money to be made', emails, input_msg=msg)
-                    else:
-                        for emails in variables.email_list:
-                            SimplyNotify.email(
-                                'Free Money to be made', emails, results_print_statement)
-
-                    break
+        # email notify and break out as emails bet oppurtunities for all sports anyway
+        if value_threshold_found:
+            if variables.print_data_frames:
+                for emails in variables.email_list:
+                    SimplyNotify.email(
+                        'Free Money to be made', emails, input_msg=msg)
+            else:
+                for emails in variables.email_list:
+                    SimplyNotify.email(
+                        'Free Money to be made', emails, results_print_statement)
 
     return True
 
