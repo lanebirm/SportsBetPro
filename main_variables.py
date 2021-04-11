@@ -1,4 +1,4 @@
-# python version 3.8.0
+#!/usr/bin/env python3
 
 # TODO: Make a config file to load values from instead of hard codding
 
@@ -10,9 +10,9 @@ class MainVariables():
         # init defaults
         # print('MainVariables init')
         # flags
-        self.pull_api_data = True	 # pull data. if False reload data of last pull
+        self.pull_api_data = False	 # pull data. if False reload data of last pull
         self.email_notify = True       # flag to push notify to phone
-        self.print_data_frames = False   # Flag to print data with data frame tables
+        self.print_data_frames = True   # Flag to print data with data frame tables
         # email notify list
         self.email_list = ['lanebirmbetnotify@gmail.com']
         # min value of the bet oppertunities max_value to prompt emailing notification

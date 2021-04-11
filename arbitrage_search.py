@@ -1,4 +1,4 @@
-# python version 3.8.0
+#!/usr/bin/env python3
 # Author: Lane Birmingham
 
 # Import required packages
@@ -13,7 +13,7 @@ import pickle
 from datetime import datetime
 import simple_notifications as SimplyNotify
 import main_variables
-import search_helper_functions as functions
+import helper_functions as functions
 
 
 def main(check_type=0):
@@ -100,7 +100,6 @@ def query(variables, check_type):
 
         count = count + 1
 
-    results_print_statement = functions.create_print_statement(data_processor)
 
     # Emailing + print with dfs
     max_value_of_intrest = variables.email_notify_threshold
@@ -113,6 +112,8 @@ def query(variables, check_type):
                 max_value_of_intrest = data_processor[i].bet_opportunities['max value']
 
     msg = SimplyNotify.MIMEMultipart()
+    results_print_statement = None
+
     if variables.print_data_frames:
         # create data frame per table
         sports_names = []
@@ -141,7 +142,7 @@ def query(variables, check_type):
                         {0}
                     </body>
                     </html>
-                    """.format(dataframe.to_html())
+                    """.format(dataframe.to_html(render_links=True))
                 table_as_string = SimplyNotify.MIMEText(html, 'html')
 
                 msg.attach(table_as_string)
@@ -157,6 +158,7 @@ def query(variables, check_type):
                     end_string))
         print(sports_dataframes)
     else:
+        results_print_statement = functions.create_print_statement(data_processor)
         print(results_print_statement)
 
     if variables.email_notify:
@@ -179,39 +181,6 @@ def get_sports():
     api_grabber = api_puller.GetData()
     api_grabber.get_active_sports()
     print('sports.json updated')
-
-
-def query_loop(duration_mins, interval_mins):
-    """ function to call the main function every mins_interval """
-    interval_in_secs = interval_mins*60
-    duration_in_seconds = duration_mins*60
-
-    t = time.time()
-    while True:
-        # call main function
-        time_before_main = time.time()
-        main()
-        print('\n \n')
-
-        time_for_main = time.time() - time_before_main
-
-        current_interval_sub_main = interval_in_secs - time_for_main
-
-        duration_in_seconds = duration_in_seconds - \
-            current_interval_sub_main - time_for_main
-
-        # if waiting another interval will run till later then given duration finish looping now
-        if duration_in_seconds < 0:
-            break
-
-        # sleep for the interval_in_secs
-        if current_interval_sub_main <= 0:
-            current_interval_sub_main = 0.01
-        time.sleep(current_interval_sub_main)
-
-    elapsed = time.time() - t
-    print('Time taken looping ' + str(elapsed))
-    print('End of query loop')
 
 
 if __name__ == '__main__':

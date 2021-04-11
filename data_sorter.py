@@ -20,12 +20,13 @@ class DataProcessor():
         self.h2h_odds = []
         self.betting_sites = []
         self.max_h2h_odds = []
+        self.second_best_h2h_odds = []
         self.max_safety_odds = []
         self.odds_total_value = []
         self.sports_name = ''
         self.start_time = {'datetime format': [],
                            'string format': [], 'time till start': []}
-        self.bet_opportunities = {'odds data': [], 'match index': [], 'start time': [
+        self.bet_opportunities = {'odds data': [], 'backup odds data': [], 'match index': [], 'start time': [
         ], 'time till start': [], 'odds total value': [], 'max value': 0}
 
     def filter_data(self, json_data):
@@ -92,6 +93,8 @@ class DataProcessor():
             # init list of 2 dictonarys (1 for each team) that contains the max odds and the site for those odds
             self.max_h2h_odds.append(
                 {self.teams[i][0]: [0, "no site"], self.teams[i][1]: [0, "no site"]})
+            self.second_best_h2h_odds.append(
+                {self.teams[i][0]: [0, "no site"], self.teams[i][1]: [0, "no site"]})
 
             for j, team in enumerate(self.teams[i]):
                 # for each team
@@ -103,8 +106,16 @@ class DataProcessor():
                     if (sites_best_use_all or (self.betting_sites[i][k] in sites_best)) and not (self.betting_sites[i][k] in exclude_sites):
                         # for all odds find largest and save. Also check exclude list
                         if site_odds[j] > self.max_h2h_odds[i][team][0]:
+                            # first save previous value as second best odds
+                            self.second_best_h2h_odds[i][team] = self.max_h2h_odds[i][team]
+                            # override best odds
                             self.max_h2h_odds[i][team] = [
                                 site_odds[j], self.betting_sites[i][k]]
+                        elif site_odds[j] > self.second_best_h2h_odds[i][team][0]:
+                            # override second best odds
+                            self.second_best_h2h_odds[i][team] = [
+                                site_odds[j], self.betting_sites[i][k]]
+
 
         # calculate max_safety_odds
         for i, event in enumerate(self.teams):
@@ -228,6 +239,8 @@ class DataProcessor():
                 #print('Found Arbitrage opportunity for event ', i)
                 self.bet_opportunities['odds data'].append(
                     self.max_h2h_odds[i])
+                self.bet_opportunities['backup odds data'].append(
+                    self.second_best_h2h_odds[i])
                 self.bet_opportunities['match index'].append(i)
                 self.bet_opportunities['start time'].append(
                     self.start_time['string format'][i])
