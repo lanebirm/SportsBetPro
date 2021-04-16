@@ -3,3 +3,4 @@ workspace.code-workspace
 *.pickle
 
 *.pyc
+simple_notifications_config.py
