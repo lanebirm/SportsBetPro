@@ -29,11 +29,13 @@ class DataProcessor():
         self.bet_opportunities = {'odds data': [], 'backup odds data': [], 'match index': [], 'start time': [
         ], 'time till start': [], 'odds total value': [], 'max value': 0}
 
-    def filter_data(self, json_data):
+    def filter_dict_data(self, json_data):
         """ process data to pull out just teams, sites and h2h odds of all events  """
 
         data = json_data['data']
         local_time_convertor = time_convertor.TimeConvertor()
+
+        self.sports_name = (data[0]['sport_nice'])
 
         for event_data in data:
             # go through each event and save data
@@ -66,12 +68,34 @@ class DataProcessor():
             self.start_time['time till start'].append(
                 local_time_convertor.time_until)
 
-        self.sports_name = (data[0]['sport_nice'])
-
         # debug helper code
         # print(self.teams)
         # print(self.betting_sites)
         # print(self.h2h_odds)
+
+    def filter_df_data(self, df):
+        """ takes in pandas datafame and fills dataprocessor from values """
+
+        local_time_convertor = time_convertor.TimeConvertor()
+
+        # all oof same sport. Get from first row
+        self.sports_name = df['sport_nice'][0]
+
+        teams_strings = df.teams_string.unique()
+        for event in teams_strings:
+            event_df = df.loc[df["teams_string"] == event].reset_index()
+            # all will be the same. Use first one for value
+            self.teams.append(event_df["teams"][0])
+            self.h2h_odds.append(event_df["odds.h2h"].tolist())
+            self.betting_sites.append(event_df["site_nice"].tolist())
+
+            local_time_convertor.convert_to_AEST(event_df["commence_time"][0])
+            self.start_time['string format'].append(
+                local_time_convertor.local_time_string)
+            self.start_time['datetime format'].append(
+                local_time_convertor.local_time)
+            self.start_time['time till start'].append(
+                local_time_convertor.time_until)
 
     def sort_max_h2h_odds(self, sites_best=[], sites_safety=[], exclude_sites=[]):
         """  sort to get max odds offered for each team for all events. """
@@ -92,14 +116,14 @@ class DataProcessor():
 
             # init list of 2 dictonarys (1 for each team) that contains the max odds and the site for those odds
             self.max_h2h_odds.append(
-                {self.teams[i][0]: [0, "no site"], self.teams[i][1]: [0, "no site"]})
+                {event[0]: [0, "no site"], event[1]: [0, "no site"]})
             self.second_best_h2h_odds.append(
-                {self.teams[i][0]: [0, "no site"], self.teams[i][1]: [0, "no site"]})
+                {event[0]: [0, "no site"], event[1]: [0, "no site"]})
 
-            for j, team in enumerate(self.teams[i]):
+            for j, team in enumerate(event):
                 # for each team
                 for k, site_odds in enumerate(self.h2h_odds[i]):
-                    # TODO. manual check to ignore Unibet odds for NHL 
+                    # TODO. manual check to ignore Unibet odds for NHL
                     if (self.sports_name == 'NHL') and (self.betting_sites[i][k] == 'Unibet'):
                         continue
                     # restrict to sites to use. defaults to all
@@ -115,7 +139,6 @@ class DataProcessor():
                             # override second best odds
                             self.second_best_h2h_odds[i][team] = [
                                 site_odds[j], self.betting_sites[i][k]]
-
 
         # calculate max_safety_odds
         for i, event in enumerate(self.teams):
@@ -231,7 +254,7 @@ class DataProcessor():
         time_now = datetime.now(time_zone)
 
         for i, event in enumerate(self.teams):
-            # if event is live data is usually not accurate enough to be used. Move on to next event. 
+            # if event is live data is usually not accurate enough to be used. Move on to next event.
             if self.start_time['datetime format'][i] < time_now:
                 continue
             # for each event check if total odds value is above the threshold
@@ -251,7 +274,7 @@ class DataProcessor():
 
                 if self.odds_total_value[i] > self.bet_opportunities['max value']:
                     self.bet_opportunities['max value'] = self.odds_total_value[i]
-    
+
     def calc_odds_value(self, odds):
         # calculate odds vale for given 2 odds in dictionary
         keys = odds.keys()
@@ -264,7 +287,6 @@ class DataProcessor():
             value = 0
 
         return value
-
 
 
 if __name__ == '__main__':
