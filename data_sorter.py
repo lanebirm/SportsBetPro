@@ -84,6 +84,14 @@ class DataProcessor():
         teams_strings = df.teams_string.unique()
         for event in teams_strings:
             event_df = df.loc[df["teams_string"] == event].reset_index()
+        
+            # alter the betfair odds the actual payable amount
+            for i in range(len(event_df['site_nice'])):
+                if event_df['site_nice'][i] == "Betfair":
+                    # Bet exchange site. Need to adjust odds assuming 5% of profit is taken
+                    event_df["odds.h2h"][i][0] = event_df["odds.h2h"][i][0] - ((event_df["odds.h2h"][i][0] - 1)*0.05)
+                    event_df["odds.h2h"][i][1] = event_df["odds.h2h"][i][1] - ((event_df["odds.h2h"][i][1] - 1)*0.05)
+
             # all will be the same. Use first one for value
             self.teams.append(event_df["teams"][0])
             self.h2h_odds.append(event_df["odds.h2h"].tolist())
@@ -96,6 +104,8 @@ class DataProcessor():
                 local_time_convertor.local_time)
             self.start_time['time till start'].append(
                 local_time_convertor.time_until)
+
+
 
     def sort_max_h2h_odds(self, sites_best=[], sites_safety=[], exclude_sites=[]):
         """  sort to get max odds offered for each team for all events. """
